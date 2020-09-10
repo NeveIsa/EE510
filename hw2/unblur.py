@@ -5,9 +5,16 @@ from scipy.io import loadmat
 import scipy.sparse as sp
 import scipy.sparse.linalg as splinalg
 
+
+
+import time
+
+start = time.time()
+
 blurryimg = loadmat('blurryimage.mat')['blurryimage']
 B = blurryimg.flatten()
-print('IMG DATATYPE:',type(blurryimg))
+
+#print('IMG DATATYPE:',type(blurryimg))
 
 
 # extend image by inserting a black boundary box
@@ -20,7 +27,7 @@ img=np.concatenate((img,vborder.T),axis=1)
 img=np.concatenate((vborder.T,img),axis=1)
 '''
 
-print('IMG SHAPE:',blurryimg.shape)
+#print('IMG SHAPE:',blurryimg.shape)
 
 
 plt.imshow(blurryimg,cmap='gray')
@@ -80,6 +87,10 @@ if method =='spinv':
 
 
 if method == 'splu':
+    
+    #convert to sparse
+    FCSC = sp.csc_matrix(F)
+    
     # https://stackoverflow.com/questions/15118177/inverting-large-sparse-matrices-with-scipy
     # takes 1s to do lu decomp
     lu_object = splinalg.splu(FCSC)
@@ -98,4 +109,8 @@ plt.imshow(recoveredoriginalsharpimage,cmap='gray')
 plt.savefig(f'recoveredoriginalsharpimagei-{method}.png')
 #plt.show()
 
+
+end = time.time()
+
+print(f'METHOD:{method} | took -> {end - start} seconds...\n')
 
